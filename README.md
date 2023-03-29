@@ -1,5 +1,5 @@
 # MySQL-Query-Examples
-I am using this repository to show different ways to query data in MySQL.
+I am using this repository to show different ways I have learned to query data in MySQL.
 The data set used is from https://www.kaggle.com/datasets/shrikrishnaparab/forbes-billionaires-and-companies-2022
 
 Functions/Queries Used
