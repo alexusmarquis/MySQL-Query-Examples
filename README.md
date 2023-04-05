@@ -33,8 +33,6 @@ Functions/Queries Used
 -SUBQUERIES
 -SUBSTR
 -SUM
--TRUNCATE
--UNION
 -UPDATE
 -WHERE
 -WITH
