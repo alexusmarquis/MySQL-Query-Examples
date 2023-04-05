@@ -1,84 +1,83 @@
 ---ALIAS---
 SELECT personName AS name, organization, category, profit 
-	FROM billionaires AS b
-		JOIN forbes_companies AS c 
-			ON b.organization = c.globalCompany;
+   FROM billionaires AS b
+       JOIN forbes_companies AS c 
+	  ON b.organization = c.globalCompany;
 
 SELECT personName AS name, age, finalWorth AS networth 
-	FROM billionaires
-		WHERE finalWorth > 100000
-	ORDER BY networth DESC 
+   FROM billionaires
+      WHERE finalWorth > 100000
+    ORDER BY networth DESC 
 LIMIT 5;
 
 
 
 ---ALTER TABLE---
 ALTER TABLE forbes_billionaires_2022
-	RENAME billionaires;
+    RENAME billionaires;
 
 ALTER TABLE `companies` 
-	CHANGE COLUMN `rank` `position` INT NULL DEFAULT NULL ;
+    CHANGE COLUMN `rank` `position` INT NULL DEFAULT NULL ;
 
 ALTER TABLE companies
-	MODIFY sales FLOAT,
-		MODIFY profit FLOAT,
-	MODIFY assets FLOAT,
+   MODIFY sales FLOAT,
+     MODIFY profit FLOAT,
+   MODIFY assets FLOAT,
 MODIFY marketValue FLOAT;
 
 ALTER TABLE billionaires
-	MODIFY COLUMN birthDate DATE;         		
+   MODIFY COLUMN birthDate DATE;         		
   --(Before this query, I had to set empty values to null instead of it being ' ' so the data type modification would work.)
 
 
 
 ---AND,OR,NOT---
 SELECT DISTINCT personName from billionaires 
-	WHERE NOT category = 'Diversified'
-		AND country = 'United States'
-			OR country = 'China';
+  WHERE NOT category = 'Diversified'
+    AND country = 'United States'
+      OR country = 'China';
 
 
 
 ---ANY---
 SELECT globalCompany, sales
-	FROM companies
-		WHERE sales = ANY
-			(SELECT sales 
-		FROM companies
-	WHERE sales > 150)
+  FROM companies
+    WHERE sales = ANY
+  (SELECT sales FROM companies
+ WHERE sales > 150)
 ORDER BY sales;
 
 
 ---AVG---
 SELECT AVG(finalWorth) 
-	FROM billionaires
-		WHERE country IN ('United States', 'China', 'France');
+  FROM billionaires
+    WHERE country IN ('United States', 'China', 'France');
 
 
 ---BETWEEN---
 SELECT globalCompany, profit
-	FROM companies
-		WHERE profit BETWEEN 500 AND 1000
-			ORDER BY profit DESC;
+   FROM companies
+  WHERE profit BETWEEN 500 AND 1000
+ORDER BY profit DESC;
 
 
 ---CASE---
 SELECT companies.globalcompany,
-	(CASE 
-		WHEN position between 1 AND 999
-			THEN 'lower rank'
-				ELSE 'higher rank'
-			END) AS companyRank 
-		FROM companies
-	WHERE country = 'United States'
+  (CASE 
+     WHEN position between 1 AND 999
+	THEN 'lower rank'
+	  ELSE 'higher rank'
+	    END) AS companyRank 
+	FROM companies
+	  WHERE country = 'United States'
 
 
 
 ---CAST---
 SELECT CAST(STR_TO_DATE(birthDate, '%m/%d/%Y') AS DATE) AS birthDate 
-	FROM billionaires
-		HAVING birthDate > '1990-12-31'
-			ORDER BY birthDate;
+    FROM billionaires
+	HAVING birthDate > '1990-12-31'
+	   ORDER BY birthDate;
 ---THIS WAS DONE BEFORE PERMANETLY CHANING THE DATE TYPE---
 
 
@@ -92,12 +91,13 @@ FROM billionaires;
 
 ---CONCAT---
 SELECT finalWorth, CONCAT(billionaires.personName, ' - ',
-              CASE WHEN finalWorth >= 110000 THEN 'top earners'
-                   WHEN finalWorth BETWEEN 5000 AND 110000 THEN 'mid earners'
+  CASE WHEN finalWorth >= 110000 THEN 'top earners'
+    WHEN finalWorth BETWEEN 5000 AND 110000 
+       THEN 'mid earners'
                    ELSE 'lower'
               END) AS person_earnings
-		FROM billionaires
-	WHERE country = 'United States'
+	    FROM billionaires
+       WHERE country = 'United States'
 ORDER BY finalWorth DESC;
 
 
@@ -125,105 +125,105 @@ SELECT DISTINCT personName, age, source
 
 ---HAVING---
 SELECT SUM(finalWorth) AS catworth, source
-	FROM billionaires
-		WHERE category IN('Technology', 'Automotive')
-		GROUP BY source
-	HAVING SUM(finalWorth) > 4000
+   FROM billionaires
+	WHERE category IN('Technology', 'Automotive')
+	 GROUP BY source
+     HAVING SUM(finalWorth) > 4000
 ORDER BY catworth DESC;
 
 
 ---IF---
 SELECT personName, age, IF(age <=40, 'young billionaire','older billionaire') 
-	AS class
-		FROM billionaires
-			ORDER BY age;
+   AS class
+     FROM billionaires
+	  ORDER BY age;
 
 
 ---IN---
 SELECT personName, age
-	FROM billionaires
-		WHERE country IN('United States', 'Japan', 'China')
-			ORDER BY age;
+   FROM billionaires
+     WHERE country IN('United States', 'Japan', 'China')
+	ORDER BY age;
 
 
 ---INNER + LEFT JOINS---
 SELECT DISTINCT personName, COUNT(globalCompany) 
-	AS amtcompany
-		FROM companies
-				INNER JOIN billionaires
-			ON companies.position = billionaires.position
-		GROUP BY personName 
-	HAVING amtcompany > 1
+  AS amtcompany
+     FROM companies
+	INNER JOIN billionaires
+      ON companies.position = billionaires.position
+    GROUP BY personName 
+  HAVING amtcompany > 1
 ORDER BY personName;
 
 SELECT personName, source, profit
-	FROM billionaires
-		LEFT JOIN companies
-	ON billionaires.position = companies.position
+   FROM billionaires
+     LEFT JOIN companies
+   ON billionaires.position = companies.position
 ORDER BY profit DESC;;
 
 
 
 ---INSERT INTO---
 INSERT INTO billionaires (personName, age, source, country, state)
-	VALUES ('Ann Walton Kroenke', 72, 'Walmart', 'United States', 'Texas');
+   VALUES ('Ann Walton Kroenke', 72, 'Walmart', 'United States', 'Texas');
 
 
 ---LEFT---
 SELECT personName, LEFT(birthDate, 4) AS birthYear
-	FROM billionaires
-		HAVING birthYear IS NOT NULL
-			ORDER BY birthYear DESC;
+  FROM billionaires
+   HAVING birthYear IS NOT NULL
+    ORDER BY birthYear DESC;
 
 
 ---LENGTH---
 SELECT personName, LENGTH(personName) AS letteramt
-	FROM billionaires
-		WHERE LENGTH(personName) >= 20
+  FROM billionaires
+     WHERE LENGTH(personName) >= 20
 	ORDER BY letteramt DESC;
 
 
 ---LIKE---
 SELECT personName, title
-	FROM billionaires
-		WHERE gender LIKE 'F' 
-			AND title LIKE '%Chair%' 
-   				OR gender LIKE 'F' 
-   					AND title LIKE '%Founder%'
-   				OR gender LIKE 'F' 
-   			AND title LIKE '%CEO%'
-   		OR gender LIKE 'F' 
-   	AND title LIKE '%Owner%'
+  FROM billionaires
+    WHERE gender LIKE 'F' 
+      AND title LIKE '%Chair%' 
+   	OR gender LIKE 'F' 
+   	  AND title LIKE '%Founder%'
+   	OR gender LIKE 'F' 
+      AND title LIKE '%CEO%'
+    OR gender LIKE 'F' 
+  AND title LIKE '%Owner%'
 ORDER BY title;
 
 
 ---MIN/MAX---
 SELECT personName, MAX(finalWorth) AS worth, source
-	FROM billionaires
-		WHERE gender = 'F' 
-			AND country = 'United States'
-		GROUP BY personName, source
-	ORDER BY worth
+  FROM billionaires
+     WHERE gender = 'F' 
+	AND country = 'United States'
+     GROUP BY personName, source
+   ORDER BY worth
 LIMIT 10;
 
 SELECT personName, MIN(finalWorth) AS worth, source
-	FROM billionaires
-		WHERE gender = 'M'
-			AND country IN ('United States', 'Japan', 'France')
-		GROUP BY personName, source
-	ORDER BY worth
+  FROM billionaires
+    WHERE gender = 'M'
+	AND country IN ('United States', 'Japan', 'France')
+    GROUP BY personName, source
+  ORDER BY worth
 LIMIT 10;
 
 
 
 ---NULL/NOT NULL---
 UPDATE billionaires
-	SET birthDate = NULL
-		WHERE birthDate = " ";
+  SET birthDate = NULL
+    WHERE birthDate = " ";
 		
-		UPDATE billionaires
-SET organization = NULLIF(organization, '')
-WHERE organization = '';
+UPDATE billionaires
+  SET organization = NULLIF(organization, '')
+    WHERE organization = '';
 
 
 
@@ -233,21 +233,21 @@ RENAME TABLE forbes_companies_2022 TO companies;
 
 ---REPLACE---
 UPDATE billionaires
-	SET birthDate = REPLACE(birthDate, '/', '-');
+   SET birthDate = REPLACE(birthDate, '/', '-');
 
 
 ---ROUND---
 SELECT globalCompany, ROUND(sales,0) AS sales2
-	FROM companies
-		GROUP BY globalCompany, ROUND(sales,0)
-			ORDER BY sales2 DESC;
+   FROM companies
+     GROUP BY globalCompany, ROUND(sales,0)
+	ORDER BY sales2 DESC;
 
 
 ---SUBQUERIES---
 SELECT personName, finalWorth, source
-	FROM billionaires 
-		WHERE source 
-			IN (SELECT globalCompany FROM companies WHERE profit > 50);
+  FROM billionaires 
+    WHERE source 
+      IN (SELECT globalCompany FROM companies WHERE profit > 50);
 			
 SELECT globalCompany, country, AVG(ROUND(sales, 2)) AS avgsales
 	FROM companies
@@ -261,18 +261,18 @@ SELECT globalCompany, country, AVG(ROUND(sales, 2)) AS avgsales
 
 
 ---SUBSTR---
-SELECT DISTINCT SUBSTR(state, 1, 4) as stateid
-	FROM billionaires
-		WHERE country = 'United States'
-			ORDER BY stateid;
+SELECT DISTINCT SUBSTR(state, 1, 4) AS stateid
+  FROM billionaires
+    WHERE country = 'United States'
+      ORDER BY stateid;
 
 
 ---SUM---
 SELECT organization, SUM(finalWorth) AS usPersonWorth
-	FROM billionaires
-		WHERE country = 'United States'
-		GROUP BY organization
-			ORDER BY organization;
+  FROM billionaires
+   WHERE country = 'United States'
+     GROUP BY organization
+	ORDER BY organization;
 
 
 ---TRIM---
@@ -286,27 +286,27 @@ assets = TRIM(TRIM(' B' FROM TRIM('$' FROM assets)));
 
 ---UPDATE---
 UPDATE companies 
-	SET sales = TRIM(REPLACE(sales, ',', '')), 
-		profit = TRIM(REPLACE(profit, ',', '')), 
-	assets = TRIM(REPLACE(assets, ',', '')),
-marketValue = TRIM(REPLACE(marketValue, ',', ''));
+  SET sales = TRIM(REPLACE(sales, ',', '')), 
+    profit = TRIM(REPLACE(profit, ',', '')), 
+      assets = TRIM(REPLACE(assets, ',', '')),
+       marketValue = TRIM(REPLACE(marketValue, ',', ''));
 
 UPDATE companies 
-	SET sales = TRIM(REPLACE(sales, 'M', '')), 
-		profit = TRIM(REPLACE(profit, 'M', '')), 
-	assets = TRIM(REPLACE(assets, 'M', '')),
+ SET sales = TRIM(REPLACE(sales, 'M', '')), 
+   profit = TRIM(REPLACE(profit, 'M', '')), 
+  assets = TRIM(REPLACE(assets, 'M', '')),
 marketValue = TRIM(REPLACE(marketValue, 'M', ''));
 
 
 ---WITH---
 WITH temp_table AS (
   SELECT personName, age, finalWorth, globalCompany, profit
-  	FROM billionaires
-  		JOIN companies ON billionaires.position = companies.position
-  			WHERE companies.country = 'United States' 
-  				AND profit > 500)
-  			SELECT personName, age, finalWorth, globalCompany, profit
-		FROM temp_table
-	WHERE age > 50
+    FROM billionaires
+      JOIN companies ON billionaires.position = companies.position
+        WHERE companies.country = 'United States' 
+      AND profit > 500)
+     SELECT personName, age, finalWorth, globalCompany, profit
+    FROM temp_table
+   WHERE age > 50
 ORDER BY age;
 
